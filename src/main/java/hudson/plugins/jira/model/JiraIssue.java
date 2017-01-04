@@ -1,6 +1,7 @@
 package hudson.plugins.jira.model;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.Status;
 import hudson.plugins.jira.JiraSite;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -21,10 +22,16 @@ public final class JiraIssue implements Comparable<JiraIssue> {
     /** Note these fields have not been renamed for backward compatibility purposes */
     private final String id;
     private final String title;
+    private final Status status;
 
     public JiraIssue(String key, String summary) {
+        this(key, summary, null);
+    }
+
+    public JiraIssue(final String key, final String summary, final Status status) {
         this.id = key;
         this.title = summary;
+        this.status = status;
     }
 
     /**
@@ -43,8 +50,13 @@ public final class JiraIssue implements Comparable<JiraIssue> {
         return title;
     }
 
+    @Exported
+    public Status getStatus() {
+        return status;
+    }
+
     public JiraIssue(Issue issue) {
-        this(issue.getKey(), issue.getSummary());
+        this(issue.getKey(), issue.getSummary(), issue.getStatus());
     }
 
     public int compareTo(@Nonnull JiraIssue that) {
@@ -79,5 +91,10 @@ public final class JiraIssue implements Comparable<JiraIssue> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Issue ID: "+id;
     }
 }
